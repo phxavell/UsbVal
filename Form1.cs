@@ -21,6 +21,9 @@ namespace UsbVal
         private bool port2 = false;
         private bool port3 = false;
         private bool port4 = false;
+        private bool sdcard = false;
+        private bool usbtest = false;
+        private string sdresult;
         private string generatedFilePath = @"C:\Temp\GeneratedFile_100MB.txt"; // Caminho temporário para salvar o arquivo gerado
         public Form1()
         {
@@ -129,15 +132,34 @@ namespace UsbVal
                 {
                     pictureBox3.Visible = true;
                     port3 = true;
-                    GenerateAndCopyFileToUsb(progressBar3);  // Copiar o arquivo para a unidade USB Port_#0004.Hub_#0001
+                    GenerateAndCopyFileToUsb(progressBar3);  // Copiar o arquivo para a unidade USB Port_#0004.Hub_#0001 Port_#0017.Hub_#0001
                     foundSpecificPort = true;
                     break;
                 }
-                if(true)
-                {
-                    string a = GetUsbDriveLetter();
-                    MessageBox.Show(a, "xxx", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
+                if (port.LocationInformation == "Port_#0017.Hub_#0001" && port4 == false)
+                {
+                    pictureBox11.Visible = true;
+                    port4 = true;
+                    GenerateAndCopyFileToUsb(progressBar6);  // Copiar o arquivo para a unidade USB Port_#0004.Hub_#0001 
+                    foundSpecificPort = true;
+                    break;
+                }
+                sdresult = GetSdDriveLetter();
+                if (port.LocationInformation != "Port_#0012.Hub_#0001" && port.LocationInformation != "Port_#0009.Hub_#0001" && port.LocationInformation != "Port_#0004.Hub_#0001" && port.LocationInformation != "Port_#0017.Hub_#0001" && sdcard ==false && sdresult != null)
+                {
+                    pictureBox10.Visible = true;
+                    sdcard = true;
+                    GenerateAndCopyFileToUsb(progressBar5);  // Copiar o arquivo para a unidade USB Port_#0004.Hub_#0001 
+                    foundSpecificPort = true;
+                    break;
+
+                }
+                if(port1==true && port2 == true && port3 == true && port4 == true && sdcard == true && usbtest==false)
+                {
+                    pictureBox1.BackColor = Color.Green;
+                    usbtest = true;
+                    MessageBox.Show("Teste Usb Finalizado Com Sucesso!!!!!", "Sucesso", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
 
             }
@@ -195,11 +217,11 @@ namespace UsbVal
                     }
                 }
                 
-                MessageBox.Show("Arquivo copiado com sucesso!", "Sucesso", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                MessageBox.Show("Tranferencia Validada com sucesso!", "Sucesso", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
             else
             {
-                MessageBox.Show("Não foi possível identificar a unidade USB.", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
+              //  MessageBox.Show("Não foi possível identificar a unidade USB.", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -242,6 +264,19 @@ namespace UsbVal
             return null; // Se não encontrar uma unidade USB
         }
 
+        private string GetSdDriveLetter()
+        {
+            // Obtém as unidades montadas no sistema
+            foreach (var drive in System.IO.DriveInfo.GetDrives())
+            {
+                if (drive.IsReady && drive.DriveType == DriveType.Removable && drive.VolumeLabel == "SDHC")
+                {
+                    // Retorna a letra da unidade USB
+                    return drive.Name; // Exemplo: "E:\", "F:\"
+                }
+            }
+            return null; // Se não encontrar uma unidade USB
+        }
 
 
         private void Form1_Load(object sender, EventArgs e)
@@ -266,7 +301,7 @@ namespace UsbVal
                         message += "---------------------------------------------------\n";
                     }
 
-                    MessageBox.Show(message, "Informações sobre dispositivos USB", MessageBoxButtons.OK, MessageBoxIcon.Information);
+         //           MessageBox.Show(message, "Informações sobre dispositivos USB", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
             }
         }
@@ -291,6 +326,11 @@ namespace UsbVal
         }
 
         private void pictureBox2_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void pictureBox8_Click(object sender, EventArgs e)
         {
 
         }
